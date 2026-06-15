@@ -1,0 +1,28 @@
+@model EmployeeManagementSystem.Models.Employee
+
+<h2>Add Employee</h2>
+
+@using (Html.BeginForm())
+{
+    <p>
+        Name <br />
+        @Html.TextBoxFor(m => m.Name)
+    </p>
+
+    <p>
+        Email <br />
+        @Html.TextBoxFor(m => m.Email)
+    </p>
+
+    <p>
+        Department <br />
+        @Html.TextBoxFor(m => m.Department)
+    </p>
+
+    <p>
+        Salary <br />
+        @Html.TextBoxFor(m => m.Salary)
+    </p>
+
+    <input type="submit" value="Save" />
+}

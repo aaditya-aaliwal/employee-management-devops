@@ -7,24 +7,40 @@ build:
   stage: build
   tags:
     - windows
+
   script:
     - '& "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" EmployeeManagementSystem.slnx /t:Restore'
     - '& "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" EmployeeManagementSystem.slnx /p:Configuration=Release'
+
+  artifacts:
+    paths:
+      - EmployeeManagementSystem.Tests/bin/Release/net48/
+    expire_in: 1 day
 
 test:
   stage: test
   tags:
     - windows
+
+  dependencies:
+    - build
+
   script:
+    - Get-ChildItem EmployeeManagementSystem.Tests\bin\Release\net48
+
     - '& "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" EmployeeManagementSystem.Tests\bin\Release\net48\EmployeeManagementSystem.Tests.dll'
 
 package:
   stage: package
   tags:
     - windows
+
+  dependencies:
+    - build
+
   script:
-    - '& "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" EmployeeManagementSystem\EmployeeManagementSystem.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:PackageLocation=publish\EmployeeManagementSystem_$env:CI_PIPELINE_ID.zip'
+    - Compress-Archive -Path EmployeeManagementSystem\* -DestinationPath EmployeeManagementSystem.zip
 
   artifacts:
     paths:
-      - publish/
+      - EmployeeManagementSystem.zip

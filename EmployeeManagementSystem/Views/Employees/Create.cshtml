@@ -1,28 +1,42 @@
 @model EmployeeManagementSystem.Models.Employee
 
+@{
+    ViewBag.Title = "Add Employee";
+}
+
 <h2>Add Employee</h2>
 
 @using (Html.BeginForm())
 {
-    <p>
-        Name <br />
-        @Html.TextBoxFor(m => m.Name)
-    </p>
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        @Html.TextBoxFor(m => m.Name,
+            new { @class = "form-control" })
+    </div>
 
-    <p>
-        Email <br />
-        @Html.TextBoxFor(m => m.Email)
-    </p>
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        @Html.TextBoxFor(m => m.Email,
+            new { @class = "form-control" })
+    </div>
 
-    <p>
-        Department <br />
-        @Html.TextBoxFor(m => m.Department)
-    </p>
+    <div class="mb-3">
+        <label class="form-label">Department</label>
+        @Html.TextBoxFor(m => m.Department,
+            new { @class = "form-control" })
+    </div>
 
-    <p>
-        Salary <br />
-        @Html.TextBoxFor(m => m.Salary)
-    </p>
+    <div class="mb-3">
+        <label class="form-label">Salary</label>
+        @Html.TextBoxFor(m => m.Salary,
+            new { @class = "form-control" })
+    </div>
 
-    <input type="submit" value="Save" />
+    <button type="submit" class="btn btn-success">
+        Save
+    </button>
+
+    <a href="/Employees" class="btn btn-secondary">
+        Cancel
+    </a>
 }

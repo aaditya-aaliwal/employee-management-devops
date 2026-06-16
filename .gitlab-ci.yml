@@ -5,20 +5,26 @@ stages:
 
 build:
   stage: build
+  tags:
+    - windows
   script:
     - msbuild EmployeeManagementSystem.slnx /t:Restore
     - msbuild EmployeeManagementSystem.slnx /p:Configuration=Release
 
 test:
   stage: test
+  tags:
+    - windows
   script:
     - '"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" EmployeeManagementSystem.Tests\bin\Release\net48\EmployeeManagementSystem.Tests.dll'
 
 package:
   stage: package
+  tags:
+    - windows
   script:
-    - msbuild EmployeeManagementSystem\EmployeeManagementSystem.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:PackageLocation=publish\EmployeeManagement_%CI_PIPELINE_ID%.zip
+    - msbuild EmployeeManagementSystem\EmployeeManagementSystem.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:PackageLocation=publish\EmployeeManagementSystem_%CI_PIPELINE_ID%.zip
 
-  artifacts:
-    paths:
-      - EmployeeManagementSystem/publish/
+artifacts:
+  paths:
+    - EmployeeManagementSystem/publish/

@@ -5,6 +5,16 @@
 }
 
 <h2>Employees</h2>
+@using (Html.BeginForm("Index", "Employees", FormMethod.Get))
+{
+    <input type="text"
+           name="searchTerm"
+           placeholder="Search by Name" />
+
+    <button type="submit">
+        Search
+    </button>
+}
 
 <p>
     <a href="/Employees/Create" class="btn btn-primary">
@@ -19,6 +29,7 @@
             <th>Email</th>
             <th>Department</th>
             <th>Salary</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -29,6 +40,12 @@
                 <td>@employee.Email</td>
                 <td>@employee.Department</td>
                 <td>@employee.Salary</td>
+                <td>
+                    <a href="/Employees/Edit/@employee.Id">Edit</a>
+                    <a href="/Employees/Delete/@employee.Id">Delete</a>
+
+                </td>
+
             </tr>
         }
     </tbody>

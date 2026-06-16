@@ -1,0 +1,44 @@
+@model EmployeeManagementSystem.Models.Employee
+
+@{
+    ViewBag.Title = "Edit Employee";
+}
+
+<h2>Edit Employee</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Id)
+
+    <div>
+        <label>Name</label><br />
+        @Html.TextBoxFor(m => m.Name)
+    </div>
+
+    <br />
+
+    <div>
+        <label>Email</label><br />
+        @Html.TextBoxFor(m => m.Email)
+    </div>
+
+    <br />
+
+    <div>
+        <label>Department</label><br />
+        @Html.TextBoxFor(m => m.Department)
+    </div>
+
+    <br />
+
+    <div>
+        <label>Salary</label><br />
+        @Html.TextBoxFor(m => m.Salary)
+    </div>
+
+    <br />
+
+    <button type="submit">
+        Update
+    </button>
+}

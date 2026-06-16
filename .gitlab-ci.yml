@@ -25,6 +25,6 @@ package:
   script:
     - msbuild EmployeeManagementSystem\EmployeeManagementSystem.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:PackageLocation=publish\EmployeeManagementSystem_%CI_PIPELINE_ID%.zip
 
-artifacts:
-  paths:
-    - EmployeeManagementSystem/publish/
+  artifacts:
+    paths:
+      - publish/

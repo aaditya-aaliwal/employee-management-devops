@@ -2,6 +2,7 @@ stages:
   - build
   - test
   - package
+  - backup
 
 build:
   stage: build
@@ -44,3 +45,18 @@ package:
   artifacts:
     paths:
       - EmployeeManagementSystem.zip
+
+backup:
+  stage: backup
+  tags:
+    - windows
+
+  script:
+    - |
+      if ((Test-Path "C:\Deployments\Current") -and ((Get-ChildItem "C:\Deployments\Current").Count -gt 0)) {
+          Write-Host "Backing up current deployment..."
+          Copy-Item "C:\Deployments\Current\*" "C:\Deployments\Backups\" -Recurse -Force
+      }
+      else {
+          Write-Host "No previous deployment found. Skipping backup."
+      }

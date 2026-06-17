@@ -4,6 +4,7 @@ stages:
   - package
   - backup
   - deploy
+  - restart
 
 build:
   stage: build
@@ -111,3 +112,20 @@ deploy:
       Write-Host ""
 
       Get-ChildItem $deployPath
+
+restart:
+  stage: restart
+  tags:
+    - windows
+
+  script:
+    - |
+      Import-Module WebAdministration
+
+      Write-Host "Restarting Application Pool..."
+
+      Restart-WebAppPool -Name "EmployeeManagementPool"
+
+      Write-Host "Checking Application Pool status..."
+
+      Get-WebAppPoolState -Name "EmployeeManagementPool"

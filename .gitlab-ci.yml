@@ -40,11 +40,30 @@ package:
     - build
 
   script:
-  - '& "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" EmployeeManagementSystem\EmployeeManagementSystem.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishUrl=publish'
+    - |
+      $publishPath = "$CI_PROJECT_DIR\publish"
+
+      if (Test-Path $publishPath) {
+        Remove-Item $publishPath -Recurse -Force
+      }
+
+      & "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" `
+        EmployeeManagementSystem\EmployeeManagementSystem.csproj `
+        /t:Build `
+        /p:Configuration=Release `
+        /p:DeployOnBuild=true `
+        /p:WebPublishMethod=FileSystem `
+        /p:PublishUrl="$publishPath" `
+        /p:DeleteExistingFiles=True
+
+      Write-Host ""
+      Write-Host "Published files:"
+      Get-ChildItem $publishPath
 
   artifacts:
     paths:
-      - EmployeeManagementSystem/publish/
+      - publish/
+    expire_in: 1 day
 
 backup:
   stage: backup

@@ -48,13 +48,12 @@ package:
       }
 
       & "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" `
-        EmployeeManagementSystem\EmployeeManagementSystem.csproj `
-        /t:Build `
-        /p:Configuration=Release `
-        /p:DeployOnBuild=true `
-        /p:WebPublishMethod=FileSystem `
-        /p:PublishUrl="$publishPath" `
-        /p:DeleteExistingFiles=True
+       EmployeeManagementSystem\EmployeeManagementSystem.csproj `
+       /t:WebPublish `
+       /p:Configuration=Release `
+       /p:WebPublishMethod=FileSystem `
+       /p:PublishUrl="$publishPath" `
+       /p:DeleteExistingFiles=True
 
       Write-Host ""
       Write-Host "Published files:"

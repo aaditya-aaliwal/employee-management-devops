@@ -3,6 +3,7 @@ stages:
   - test
   - package
   - backup
+  - deploy
 
 build:
   stage: build
@@ -78,3 +79,35 @@ backup:
       else {
           Write-Host "No previous deployment found. Skipping backup."
       }
+
+deploy:
+  stage: deploy
+  tags:
+    - windows
+
+  dependencies:
+    - package
+
+  script:
+    - |
+      $artifactPath = "$CI_PROJECT_DIR\publish"
+      $deployPath = "C:\Deployments\Current"
+
+      Write-Host "Cleaning deployment directory..."
+
+      if (Test-Path $deployPath) {
+          Remove-Item "$deployPath\*" -Recurse -Force
+      }
+      else {
+          New-Item -ItemType Directory -Path $deployPath | Out-Null
+      }
+
+      Write-Host "Deploying published files..."
+
+      Copy-Item "$artifactPath\*" $deployPath -Recurse -Force
+
+      Write-Host ""
+      Write-Host "Deployment completed."
+      Write-Host ""
+
+      Get-ChildItem $deployPath

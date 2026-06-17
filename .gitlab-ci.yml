@@ -5,6 +5,7 @@ stages:
   - backup
   - deploy
   - restart
+  - health_check
 
 build:
   stage: build
@@ -129,3 +130,24 @@ restart:
       Write-Host "Checking Application Pool status..."
 
       Get-WebAppPoolState -Name "EmployeeManagementPool"
+
+health_check:
+  stage: health_check
+  tags:
+    - windows
+
+  script:
+    - |
+      Write-Host "Checking application health..."
+
+      $response = Invoke-WebRequest -Uri "http://localhost:8080" -UseBasicParsing
+
+      Write-Host ""
+      Write-Host "Status Code:" $response.StatusCode
+
+      if ($response.StatusCode -eq 200) {
+          Write-Host "Application is healthy."
+      }
+      else {
+          throw "Health check failed."
+      }

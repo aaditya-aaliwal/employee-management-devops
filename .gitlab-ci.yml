@@ -44,7 +44,7 @@ package:
 
   artifacts:
     paths:
-      - EmployeeManagementSystem.zip
+      - EmployeeManagementSystem/publish/
 
 backup:
   stage: backup

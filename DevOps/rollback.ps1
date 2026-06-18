@@ -24,6 +24,7 @@ Write-Host "===================================="
 
 Write-Host "Stopping IIS Application Pool..."
 Stop-WebAppPool -Name $AppPoolName
+Start-Sleep -Seconds 5
 
 Write-Host "Removing current deployment files..."
 Remove-Item "$CurrentPath\*" -Recurse -Force
@@ -33,7 +34,7 @@ Copy-Item "$BackupPath\*" "$CurrentPath" -Recurse -Force
 
 Write-Host "Starting IIS Application Pool..."
 Start-WebAppPool -Name $AppPoolName
-
+Start-Sleep -Seconds 5
 Write-Host "Validating application after rollback..."
 
 $response = Invoke-WebRequest "http://localhost:8080" -UseBasicParsing

@@ -191,10 +191,20 @@ health_check:
       Write-Host "Status Code:" $response.StatusCode
 
       if ($response.StatusCode -eq 200) {
-          Write-Host "Application is healthy."
+
+      Write-Host "Application is healthy."
+
+      $logFile = "C:\Deployments\Logs\deployment.log"
+      $version = $env:CI_PIPELINE_ID
+      $status = "Success"
+      $date = Get-Date -Format "dd-MMM-yyyy HH:mm:ss"
+
+      "$version`t$status`t$date" | Out-File -FilePath $logFile -Append
+
+      Write-Host "Deployment history updated."
       }
       else {
-          throw "Health check failed."
+      throw "Health check failed."
       }
 
 rollback:

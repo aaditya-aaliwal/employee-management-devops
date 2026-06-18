@@ -6,6 +6,7 @@ stages:
   - deploy
   - restart
   - health_check
+  - rollback
 
 build:
   stage: build
@@ -44,7 +45,8 @@ package:
 
   script:
     - |
-      $publishPath = "$CI_PROJECT_DIR\publish"
+      $version = $env:CI_PIPELINE_ID
+      $publishPath = "$CI_PROJECT_DIR\publish\$version"
 
       if (Test-Path $publishPath) {
         Remove-Item $publishPath -Recurse -Force
@@ -62,6 +64,26 @@ package:
       Write-Host "Published files:"
       Get-ChildItem $publishPath
 
+      $releasePath = "C:\Deployments\Releases\$version"
+
+      if (Test-Path $releasePath) {
+      Remove-Item $releasePath -Recurse -Force
+      }
+
+      New-Item -ItemType Directory -Path $releasePath | Out-Null
+      Copy-Item "$publishPath\*" $releasePath -Recurse -Force
+
+      Write-Host "Release stored at: $releasePath"
+      $zipFile = "$CI_PROJECT_DIR\publish\EmployeeManagement_$version.zip"
+
+      if (Test-Path $zipFile) {
+      Remove-Item $zipFile -Force
+      }
+
+      Compress-Archive -Path "$publishPath\*" -DestinationPath $zipFile
+
+      Write-Host "ZIP Package Created: $zipFile"
+
   artifacts:
     paths:
       - publish/
@@ -73,10 +95,28 @@ backup:
     - windows
 
   script:
-    - |
+  - |
+      $currentVersion = "0"
+
+      if (Test-Path "C:\Deployments\Current\version.txt") {
+      $currentVersion = Get-Content "C:\Deployments\Current\version.txt"
+      }
+
+      $backupPath = "C:\Deployments\Backups\$currentVersion"
+
       if ((Test-Path "C:\Deployments\Current") -and ((Get-ChildItem "C:\Deployments\Current").Count -gt 0)) {
-          Write-Host "Backing up current deployment..."
-          Copy-Item "C:\Deployments\Current\*" "C:\Deployments\Backups\" -Recurse -Force
+
+          Write-Host "Creating backup for version $version..."
+
+          if (Test-Path $backupPath) {
+              Remove-Item $backupPath -Recurse -Force
+          }
+
+          New-Item -ItemType Directory -Path $backupPath | Out-Null
+
+          Copy-Item "C:\Deployments\Current\*" $backupPath -Recurse -Force
+
+          Write-Host "Backup stored at: $backupPath"
       }
       else {
           Write-Host "No previous deployment found. Skipping backup."
@@ -92,7 +132,8 @@ deploy:
 
   script:
     - |
-      $artifactPath = "$CI_PROJECT_DIR\publish"
+      $version = $env:CI_PIPELINE_ID
+      $artifactPath = "C:\Deployments\Releases\$version"
       $deployPath = "C:\Deployments\Current"
 
       Write-Host "Cleaning deployment directory..."
@@ -111,6 +152,10 @@ deploy:
       Write-Host ""
       Write-Host "Deployment completed."
       Write-Host ""
+
+      Set-Content -Path "$deployPath\version.txt" -Value $version
+
+      Write-Host "Current deployed version: $version"
 
       Get-ChildItem $deployPath
 
@@ -151,3 +196,15 @@ health_check:
       else {
           throw "Health check failed."
       }
+
+rollback:
+  stage: rollback
+  tags:
+    - windows
+
+  when: on_failure
+
+  script:
+    - |
+      Write-Host "Starting automatic rollback..."
+      powershell -ExecutionPolicy Bypass -File "$CI_PROJECT_DIR\DevOps\rollback.ps1"
